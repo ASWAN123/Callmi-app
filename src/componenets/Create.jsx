@@ -31,7 +31,7 @@ function Create() {
   const Join = async () => {
     if( jname.trim() === "" || jRoom.trim() == '' ) return
     setUserName(jname)
-    await db.collection('callmi').doc(jRoom).update({users:firebase.firestore.FieldValue.arrayUnion({ 'name':jname ,  'admin':false })})
+    await db.collection('callmi').doc(jRoom).update({users:firebase.firestore.FieldValue.arrayUnion({ 'name':jname ,  'admin':false , 'PeerID':uuid() })})
     navigate('/room/'+jRoom)
     return
   }
@@ -39,7 +39,7 @@ function Create() {
   const Create =async () => {
     if( cname.trim() === "" ) return
     setUserName(cname)
-    await db.collection('callmi').doc(roomID).update({users:firebase.firestore.FieldValue.arrayUnion({ 'name':cname ,  'admin':true   })})
+    await db.collection('callmi').doc(roomID).update({users:firebase.firestore.FieldValue.arrayUnion({ 'name':cname ,  'admin':true  , 'PeerID':uuid()  })})
     navigate('/room/'+roomID)
     return
   }
