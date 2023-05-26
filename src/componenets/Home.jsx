@@ -1,102 +1,152 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Peer } from "peerjs";
-import uuid from "uuid-random";
-import { roomContext } from "./contextRoom";
+import { roomContext } from "./ContextRoom";
 import firebase from "firebase/compat/app";
+import Chat from "./Chat";
 
 function Home() {
-  let { data, db, userName } = useContext(roomContext);
-  let { id } = useParams();
-  let users = data?.find((doc) => doc.id == id)?.users;
-  // let otherUsers = users?.filter((usr) => usr.name !== userName);
-  let user = users?.find((usr) => usr.name == userName);
+  let { data, db } = useContext(roomContext);
+  let { id, PeerID } = useParams();
+  let users = data?.find((doc) => doc.id === id)?.users;
+  let user = users?.find((usr) => usr.PeerID === PeerID);
+  let otherUsers = users?.find((usr) => usr.admin !== true);
   const [peer, setPeer] = useState(null);
-  const [message, setMessage] = useState('');
-  const [pid, setPid] = useState('');
-  const [messages, setMessages] = useState([]);
+  let [streams, setStreams] = useState([]);
+  let [incomingcall, setIncomingCall] = useState(null);
 
   useEffect(() => {
-    const newPeer = new Peer(user.PeerID);
-    newPeer.on('open', function(peerId) {
-      setPeer(newPeer);
-    });
-
-    // Handle incoming connections from other peers
-    newPeer.on('connection', function(conn) {
-      console.log('Incoming connection from Peer ID:', conn.peer);
-      conn.on('data', function(data) {
-        setMessages((prevMessages) => [...prevMessages, data]);
-        console.log('Received data from incoming connection:', data);
+    const newPeer = new Peer(PeerID);
+    setPeer(newPeer);
+    navigator.mediaDevices
+      .getUserMedia({ video: true, audio: true })
+      .then((stream) => {
+        const videoElement = document.getElementById("localvideo");
+        videoElement.srcObject = stream ;
       });
+    newPeer.on("call", (call) => {
+      setIncomingCall(call);
     });
-
-    // No cleanup function is needed
   }, []);
 
-  // Function to send a message to the other user
-  function sendMessage() { 
-    if (!peer) return
-    const conn = peer.connect(pid);
-    conn.on('open', function() {
-    //   console.log('Connection with the other user is open');
+  const askToJoin = (x) => {
+    const localMediaStream = document.getElementById("localvideo").srcObject;
+    if (peer) {
+      // admin call the  guy
+      const call = peer.call( x.PeerID, localMediaStream ); 
+      // and waits  for  his  stream after  accepting  the  call add it  the  box of his  id
+      call.on("stream", (remoteStream) => {
+        const remotevideo = document.getElementById(`${x.PeerID}`) ;
+        remotevideo.srcObject = remoteStream ;
+      })
+      call.on("close", () => {
+      });
+      call.on("error", (error) => {
+      });
+    }
+  };
 
-      // Send the message to the other user
-      conn.send(message);
-      setMessage('');
-      console.log('Sent data:', message);
-    });
-  }
+  const AceepttheCall = () => {
+    if (incomingcall) {
+      setIncomingCall(null);
+      let newuserCollection = users.map((user)=> {
+        if(user.PeerID == PeerID) {
+          let updateuser = { ... user ,  live:true }
+          return updateuser
+        }
+        return user
+      })
+      db.collection('callmi').doc(id).update({users:newuserCollection})
+      // if the there is   guy calling
+      const localMediaStream = document.getElementById("localvideo").srcObject ;
+      incomingcall.answer(localMediaStream) ; // videoElement.srcObject = incomingcall.remoteStream; // set the remote stream
 
+      
+        const videoElement = document.getElementById( `${users.find((usr)=> usr.admin == true).PeerID}` ) ;
+        incomingcall.on("stream", (remoteStream) => {
+          videoElement.srcObject = remoteStream;// if  the  guy accept  the  call show his stream on the  remotevideo  element
+        });
+      
 
+      
 
-
-
-  
-
-
-
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center">
-      <p>room : {id} </p>
-      <p>usrname : {user?.name} </p>
-      <div> <span>messages: </span>
-        {
-          messages.map((msg ,  index) => {
-            return <p key={index}>{msg}</p>
-          })
-        }
-      </div>
-      <p>peerid :{user.PeerID} </p>
+    <div className=" max-h-screen flex gap-2 justify-between ">
+      <div className="w-full flex gap-2   p-2 ">
+        <div className="remote-videos w-[25%]   max-h-screen py-8 flex flex-col gap-4 items-center  overflow-y-auto ">
+          {users?.map((usr) => {
+            return (
+              <div
+                key={usr.PeerID}
+                className=" w-[80%] h-[150px] border flex flex-col justify-center items-center"
+              >
+                <video
+                  className=" w-[80%] h-[150px] "
+                  id={usr.PeerID}
+                  autoPlay
+                  muted
+                ></video>
+                <p className="py-1  capitalize ">{usr.name}</p>
+                {user.admin && (
+                  <button
+                    onClick={() => {
+                      askToJoin(usr);
+                    }}
+                    className="bg-green-500 px-2 py-1 rounded-md "
+                  >
+                    ask to join
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        <div className="local-videos  w-[80%] flex items-center justify-center flex-col gap-2 p-4 ">
+          {incomingcall && (
+            <div className="w-[60%] bg-blue-600  rounded-md h-[50px] flex items-center justify-center gap-4 py-2 px-6 ">
+              <p className="mr-auto ">Sara is Calling</p>
+              <button
+                onClick={AceepttheCall}
+                className="px-2 py-1 rounded-md  bg-green-500 "
+              >
+                Accept
+              </button>
+              <button className="px-2 py-1 rounded-md  bg-red-500 ">
+                Deny
+              </button>
+            </div>
+          )}
+          <video
+            className=" w-[90%] h-full scale-x-[-1] rounded-md "
+            id="localvideo"
+            autoPlay
+            muted
+          ></video>
 
-      <div className="flex flex-col gap-6 p-4 ">
-        <label htmlFor="">send message </label>
-        <input
-          type="text"
-          placeholder="other peer"
-          value={pid}
-          onChange={(e) => {
-            setPid(e.target.value);
-          }}
-          className="border-b-red-500 text-black outline-none w-[300px] h-[30px]"
-        />
-        <input
-          type="text"
-          value={message}
-          placeholder="message  content"
-          onChange={(e) => {
-            setMessage(e.target.value);
-          }}
-          className="  outline-none text-black border-b-red-500 w-[300px] h-[30px] "
-        />
-        <button
-          onClick={sendMessage}
-          className="bg-green-500 text-black px-6 py-1"
-        >
-          send message
-        </button>
+          <div className="  text-white flex gap-4 items-center justify-between ">
+            {user?.admin && (
+              <button className=" mt-4 bg-blue-500 px-2 py-1 rounded-lg w-[100px]">
+                start call
+              </button>
+            )}
+            {!user?.admin && (
+              <button className=" mt-4 bg-blue-500 px-2 py-1 rounded-lg w-[100px]">
+                join
+              </button>
+            )}
+
+            {user?.live && (
+              <button className=" mt-4 bg-blue-500 px-2 py-1 rounded-lg w-[100px]">
+                end call
+              </button>
+            )}
+          </div>
+        </div>
       </div>
+      <Chat />
     </div>
   );
 }

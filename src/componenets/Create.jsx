@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Peer } from "peerjs";
-import { roomContext } from "./contextRoom";
+import React, { useContext, useState } from "react";
+// import { Peer } from "peerjs";
+import { roomContext } from "./ContextRoom";
 import { DotWave } from "@uiball/loaders";
 import { useNavigate } from "react-router-dom";
 import firebase from 'firebase/compat/app' ;
@@ -16,7 +16,8 @@ function Create() {
   let [loading, setLoading] = useState(false);
   let navigate = useNavigate()
 
-  let { data, db  , setUserName } = useContext(roomContext);
+  let {  db  , setUserName } = useContext(roomContext);
+  let peerid = uuid() ;
   
 
 
@@ -29,31 +30,31 @@ function Create() {
   };
 
   const Join = async () => {
-    if( jname.trim() === "" || jRoom.trim() == '' ) return
+    if( jname.trim() === "" || jRoom.trim() === '' ) return
     setUserName(jname)
-    await db.collection('callmi').doc(jRoom).update({users:firebase.firestore.FieldValue.arrayUnion({ 'name':jname ,  'admin':false , 'PeerID':uuid() })})
-    navigate('/room/'+jRoom)
+    await db.collection('callmi').doc(jRoom).update({ users:firebase.firestore.FieldValue.arrayUnion({ live:false , 'name':jname ,  'admin':false , 'PeerID':peerid , live:false })})
+    navigate('/room/'+jRoom+'/'+peerid)
     return
   }
 
   const Create =async () => {
     if( cname.trim() === "" ) return
     setUserName(cname)
-    await db.collection('callmi').doc(roomID).update({users:firebase.firestore.FieldValue.arrayUnion({ 'name':cname ,  'admin':true  , 'PeerID':uuid()  })})
-    navigate('/room/'+roomID)
+    await db.collection('callmi').doc(roomID).update({  allmessages : [] , users:firebase.firestore.FieldValue.arrayUnion({ live:false ,'name':cname ,  'admin':true  , 'PeerID': peerid ,  live:false })})
+    navigate('/room/'+roomID+'/'+peerid)
     return
   }
 
   return (
     <div className=" w-full  md:w-[80%] absolute top-[50%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] flex flex-col md:flex-row gap-12 md:gap-6 justify-between items-center text-white p-4">
-      <div className="absolute -top-[10%] md:-top-[30%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] ">
+      <div className="absolute -top-[10%] md:-top-[80%] left-[50%] transform translate-x-[-50%] translate-y-[-50%] ">
         <p className="text-[35px] font-bold text-white">
           call<span className="text-blue-400 uppercase">mi</span>
         </p>
       </div>
       <div className="w-full md:w-[40%] flex flex-col gap-6">
         {/* join */}
-        <p className="text-center text-[1.5rem]">Join Room</p>
+        {/* <p className="text-center text-[1.5rem]">Join Room</p> */}
         <input
           value={jname}
           onChange={(e) => {
@@ -87,7 +88,7 @@ function Create() {
       <div className="w-full md:w-[40%] flex flex-col gap-6 ">
         {/* create */}
         {loading && <div className="mx-auto"><DotWave size={47} speed={1} color="white" /></div> }
-        {!toggle && <p className="text-center text-[1.5rem]">Create Room</p>}
+        {/* {!toggle && <p className="text-center text-[1.5rem]">Create Room</p>} */}
         {!toggle && (
           <input
             value={cname}
