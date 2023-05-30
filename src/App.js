@@ -28,7 +28,7 @@ function App() {
 
 
   return (
-    <div className="App min-h-screen bg-gradient-to-b from-gray-100 to-gray-100   text-white ">
+    <div className="App  container mx-auto min-h-screen bg-[#032930]  text-white ">
       <roomContext.Provider value={{data , db , userName , setUserName }}>
       <Routes>
         <Route path=''           element={<Create />}></Route>

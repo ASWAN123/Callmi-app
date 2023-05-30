@@ -32,7 +32,7 @@ function Create() {
   const Join = async () => {
     if( jname.trim() === "" || jRoom.trim() === '' ) return
     setUserName(jname)
-    await db.collection('callmi').doc(jRoom).update({ users:firebase.firestore.FieldValue.arrayUnion({ live:false , 'name':jname ,  'admin':false , 'PeerID':peerid , live:false })})
+    await db.collection('callmi').doc(jRoom).update({ users:firebase.firestore.FieldValue.arrayUnion({ live:false , 'name':jname ,  'admin':false , 'PeerID':peerid  })})
     navigate('/room/'+jRoom+'/'+peerid)
     return
   }
@@ -40,7 +40,7 @@ function Create() {
   const Create =async () => {
     if( cname.trim() === "" ) return
     setUserName(cname)
-    await db.collection('callmi').doc(roomID).update({  allmessages : [] , users:firebase.firestore.FieldValue.arrayUnion({ live:false ,'name':cname ,  'admin':true  , 'PeerID': peerid ,  live:false })})
+    await db.collection('callmi').doc(roomID).update({   allmessages : [] , users:firebase.firestore.FieldValue.arrayUnion({ live:true ,'name':cname ,  'admin':true , calling:[]  , 'PeerID': peerid })})
     navigate('/room/'+roomID+'/'+peerid)
     return
   }
@@ -52,43 +52,9 @@ function Create() {
           call<span className="text-blue-400 uppercase">mi</span>
         </p>
       </div>
-      <div className="w-full md:w-[40%] flex flex-col gap-6">
-        {/* join */}
-        {/* <p className="text-center text-[1.5rem]">Join Room</p> */}
-        <input
-          value={jname}
-          onChange={(e) => {
-            setJname(e.target.value);
-          }}
-          className="w-full outline-none px-2 py-1 bg-transparent border-b "
-          placeholder="Name"
-          type="text"
-        />
-        <input
-          value={jRoom}
-          onChange={(e) => {
-            setJroom(e.target.value);
-          }}
-          className="w-full outline-none px-2 py-1 bg-transparent border-b "
-          placeholder="Room ID"
-          type="text"
-          name=""
-          id=""
-        />
-        <button onClick={Join} className="px-2 py-1 bg-blue-600 rounded-md font-bold ">
-          Join
-        </button>
-      </div>
-
-      <div className="flex items-center md:flex-col w-full md:w-auto gap-4 md:gap-12 ">
-        <hr className="border-1 w-full bg-blue-800 md:rotate-[90deg] md:w-[100px] " />
-        <p className="text-[1rem]">OR</p>
-        <hr className="border-1 w-full bg-blue-800 md:rotate-[90deg] md:w-[100px] " />
-      </div>
       <div className="w-full md:w-[40%] flex flex-col gap-6 ">
         {/* create */}
         {loading && <div className="mx-auto"><DotWave size={47} speed={1} color="white" /></div> }
-        {/* {!toggle && <p className="text-center text-[1.5rem]">Create Room</p>} */}
         {!toggle && (
           <input
             value={cname}
@@ -127,6 +93,41 @@ function Create() {
           </button>
         )}
       </div>
+
+
+      <div className="flex items-center md:flex-col w-full md:w-auto gap-4 md:gap-12 ">
+        <hr className="border-1 w-full bg-blue-800 md:rotate-[90deg] md:w-[100px] " />
+        <p className="text-[1rem]">OR</p>
+        <hr className="border-1 w-full bg-blue-800 md:rotate-[90deg] md:w-[100px] " />
+      </div>
+
+      <div className="w-full md:w-[40%] flex flex-col gap-6">
+      {/* join */}
+        <input
+          value={jname}
+          onChange={(e) => {
+            setJname(e.target.value);
+          }}
+          className="w-full outline-none px-2 py-1 bg-transparent border-b "
+          placeholder="Name"
+          type="text"
+        />
+        <input
+          value={jRoom}
+          onChange={(e) => {
+            setJroom(e.target.value);
+          }}
+          className="w-full outline-none px-2 py-1 bg-transparent border-b "
+          placeholder="Room ID"
+          type="text"
+          name=""
+          id=""
+        />
+        <button onClick={Join} className="px-2 py-1 bg-blue-600 rounded-md font-bold ">
+          Join
+        </button>
+      </div>
+
     </div>
   );
 }
