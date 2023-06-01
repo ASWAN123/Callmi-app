@@ -11,12 +11,13 @@ function Header() {
 
   return (
     <div>
-      <div className="border-b-2 border-gray-100/50 flex justify-between gap-4 px-4 items-cneter text-[2rem] pt-2 ">
-        <h1 className="text-[2rem]   "> Marketing Room </h1> <p>01:23</p>
+      <div className=" md:border-b-2 border-gray-100 text-black flex justify-between items-center gap-4 px-4 items-cneter text-[2rem] pt-2 ">
+        <h1 className="text-[1.5rem] md:text-[2rem] text-[#3e3243] font-bold "> Marketing Room </h1 > 
+        <p className=" text-[1rem] text-white bg-[#3e3243] rounded-md px-2  ">01:23</p>
       </div>
-      <div className="flex gap-8 mb-2  items-center justify-center ">
-        <p>online users : {users?.filter(usr => usr.live === true).length} </p>
-        <p>offline users : {users?.filter(usr => usr.live !== true).length} </p>
+      <div className="flex gap-8  md:mt-4  items-center justify-center ">
+        <p className="px-2  rounded-md capitalize bg-[#9c82a5] mt-3 ">online users : {users?.filter(usr => usr.live === true).length} </p>
+        <p className="px-2  rounded-md capitalize bg-[#9c82a5] mt-3 ">offline users : {users?.filter(usr => usr.live !== true).length} </p>
       </div>
     </div>
   );

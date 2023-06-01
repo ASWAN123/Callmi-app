@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import LocalVideo from "./LocalVideo";
-import RemoteVideo from "./RemoteVideo";
 import Header from "./Header";
 import { roomContext } from "./ContextRoom";
 import { useParams } from "react-router-dom";
@@ -17,8 +16,33 @@ function Videos() {
   let admin = users?.find((usr) => usr.admin === true);
   let otherUsers = users?.filter((usr) => usr.admin !== true);
   let [peer, setPeer] = useState(null);
-  let [otherStreams, setOtherStreams] = useState([]);
+  const [streams, setStreams] = useState( [] );
 
+
+
+
+
+  const handleStream = (newStream, id) => {
+    setStreams((prevStreams) => {
+      const updatedStreams = [...prevStreams];
+      const userIndex = updatedStreams.findIndex((user) => user.id === id);
+  
+      if (userIndex !== -1) {
+        // If the user already exists, update their stream
+        updatedStreams[userIndex].stream = newStream;
+      } else {
+        // If the user doesn't exist, add them to the streams array
+        updatedStreams.push({ id: id, stream: newStream });
+      }
+  
+      return updatedStreams;
+    });
+  };
+
+
+
+
+  
   useEffect(() => {
     let newpeer = new Peer(PeerID);
     setPeer(newpeer);
@@ -32,41 +56,37 @@ function Videos() {
           call.answer(mystream); // Answer the call by providing the local stream
 
           call.on("stream", (remoteStream) => {
-            let replaceElement = document.getElementById(call.peer);
-            if (replaceElement) {
-              replaceElement.innerHTML = ""; // Clear the existing content
-              replaceElement.style.border = "none";
-              const videoElement = document.createElement("video");
-              videoElement.srcObject = remoteStream;
-              videoElement.className = " h-[160px] w-auto rounded-lg border-2 ";
-              videoElement.autoplay = true;
-              videoElement.muted = false;
-
-              replaceElement.appendChild(videoElement); // Append the video element to the parent element
-            }
+            handleStream(remoteStream  ,  call.peer)
+          });
+          call.on("error", (error) => {
+            // Handle the error here
+            console.error("Error during call:", error);
           });
         });
       })
-      .catch((error) => {
-        console.error("Error accessing media devices:", error);
-      });
+
   }, []);
 
+
   return (
-    <div className=" w-full flex gap-4 justify-between ">
+    <div className=" w-full flex gap-4 justify-between   flex-col-reverse  md:flex-row-reverse ">
       {/* remote  videos */}
-      <div className="w-[25%] rounded-md  flex flex-col gap-4 p-2 bg-[#0f5860]">
+      <div className=" md:w-[30%] rounded-md  flex flex-col w-full  gap-4 p-2 bg-[#eae6ee] "> 
+        <h1 className="text-[2rem] border-b-2 border-gray-100 text-center font-bold text-black ">Friends</h1>
         {!!otherUsers && (
-          <div className="text-center mt-4 flex gap-2 items-center justify-center ">
-            <span className="text-[18px]">{otherUsers.length}</span>
-            <p>joined this room</p>{" "}
+          <div className="text-center  md:mt-4 flex gap-2 items-center justify-center text-black mt-auto"> 
+            <span className="text-[18px]">{otherUsers.length}</span> 
+            <p>joined this room</p>
           </div>
         )}
 
-        {users
-          ?.filter((usr) => usr.PeerID !== PeerID)
-          .map((x) => {
-            return <UserCard key={x.PeerID} user={x} realuser={user} />;
+
+        {streams?.filter((x) => x.id !== PeerID  ).map((stm) => {
+           let target1 = users?.find( x => x.PeerID == stm.id ) 
+           if(target1.live === true && user?.live == true  ){
+              return <UserCard key={stm.id} myid = {stm.id} stream = {stm.stream} streams={streams} />;
+           }
+            
           })}
 
         {!otherUsers && (
@@ -74,10 +94,10 @@ function Videos() {
         )}
       </div>
       {/* local video */}
-      <div className="w-[75%] bg-[#12484f] flex flex-col gap-2 rounded-md ">
+      <div className="md:w-[75%] w-full  min-h-full  flex flex-col gap-2 rounded-md bg-[#eae6ee] ">
         <Header />
         {stream !== false && (
-          <LocalVideo peer={peer} user={user} stream={stream} />
+          <LocalVideo peer={peer} user={user} stream={stream} streams={streams} setStreams={setStreams} />
         )}
       </div>
     </div>

@@ -28,8 +28,8 @@ function App() {
 
 
   return (
-    <div className="App  container mx-auto min-h-screen bg-[#032930]  text-white ">
-      <roomContext.Provider value={{data , db , userName , setUserName }}>
+    <div className="App  container mx-auto min-h-screen   text-white " >
+      <roomContext.Provider value={{data , db , userName , setUserName }} >
       <Routes>
         <Route path=''           element={<Create />}></Route>
         <Route path='/room/:id/:PeerID'  element={<Home />}></Route>

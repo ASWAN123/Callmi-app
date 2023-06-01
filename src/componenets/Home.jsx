@@ -9,9 +9,8 @@ import Videos from "./Videos";
 function Home() {
   let { data, db } = useContext(roomContext);
 
-
   return (
-    <div className=" max-h-screen min-h-screen flex gap-4 justify-between py-2 ">
+    <div className=" max-h-screen min-h-screen flex gap-2 md:gap-4 md:justify-between p-2 md:px-0 md:py-2 flex-col md:flex-row ">
       <Videos />
       <Chat />
     </div>
