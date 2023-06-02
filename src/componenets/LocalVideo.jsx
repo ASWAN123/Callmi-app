@@ -6,6 +6,7 @@ import { AiOutlinePlusCircle } from "react-icons/ai";
 import { roomContext } from "./ContextRoom";
 import { useParams } from "react-router-dom";
 import firebase from "firebase/compat/app";
+import Call from "./Call";
 
 function LocalVideo({ peer, user, stream, streams, setStreams }) {
   let { data, db } = useContext(roomContext);
@@ -76,42 +77,6 @@ function LocalVideo({ peer, user, stream, streams, setStreams }) {
     db.collection("callmi").doc(id).update({ users: newusers });
   };
 
-  /// accept  the  call
-  const accept = (y) => {
-    let newusers = users?.map((x) => {
-      if (x.PeerID == y) {
-        return { ...x, live: true, request: "valid" };
-      }
-
-      if (x.admin == true) {
-        let callers =
-          x.calling.length == 1 ? [] : x.calling.filter((w) => w !== y);
-        return { ...x, calling: callers };
-      }
-
-      return x;
-    });
-    let update = db.collection("callmi").doc(id).update({ users: newusers });
-  };
-
-  /// deny a  call
-  const deny = (y) => {
-    let newusers = users?.map((x) => {
-      if (x.PeerID == y) {
-        return { ...x, live: false, request: "refuse" };
-      }
-
-      if (x.admin == true) {
-        let callers =
-          x.calling.length == 1 ? [] : x.calling.filter((w) => w !== y);
-        return { ...x, calling: callers };
-      }
-
-      return x;
-    });
-    let update = db.collection("callmi").doc(id).update({ users: newusers });
-    toast("call denied");
-  };
 
   // get disconnected
   const getdisconnected = (y) => {
@@ -145,43 +110,14 @@ function LocalVideo({ peer, user, stream, streams, setStreams }) {
 
   return (
     <div className=" flex gap-4 items-center p-2 md:p-8 flex-col rounded-md ">
-      {user?.admin &&
-        user?.calling.length > 0 &&
-        user?.calling.map((appel, index) => {
-          return (
-            <div
-              className="flex gap-4  items-center rounded-lg p-4 md:px-2 md:py-4 bg-blue-300 text-white"
-              key={index}
-            >
-              <p className="capitalize font-bold ">
-                {users?.find((x) => x.PeerID == appel).name} is calling...{" "}
-              </p>
-              <button
-                className="bg-green-600 px-4 rounded-md  capitalize text-white "
-                onClick={() => {
-                  accept(appel);
-                }}
-              >
-                accept
-              </button>
-              <button
-                className="bg-red-600 px-4 rounded-md  capitalize text-white  "
-                onClick={() => {
-                  deny(appel);
-                }}
-              >
-                deny
-              </button>
-            </div>
-          );
-        })}
-
+      
       <video
         id="localvideo"
         autoPlay
         muted
         className=" md:w-auto md:h-[400px]  scale-x-[-1] rounded-lg border-white border-2 "
-      ></video>
+      >
+      </video>
       {!user?.admin && !user?.live && (
         <div
           onClick={() => {
@@ -197,7 +133,7 @@ function LocalVideo({ peer, user, stream, streams, setStreams }) {
       {!user?.admin && user?.live && (
         <div
           onClick={() => {
-            getdisconnected(user?.PeerID);
+            getdisconnected(user?.PeerID) ;
           }}
           className="flex gap-2 text-[1rem] bg-red-600 px-8 py-1 rounded-md items-center cursor-pointer "
         >
@@ -205,6 +141,7 @@ function LocalVideo({ peer, user, stream, streams, setStreams }) {
           <FiPhoneCall size={20} />
         </div>
       )}
+      <Call  user={user} />
     </div>
   );
 }

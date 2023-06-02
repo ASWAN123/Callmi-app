@@ -19,9 +19,6 @@ function Videos() {
   const [streams, setStreams] = useState( [] );
 
 
-
-
-
   const handleStream = (newStream, id) => {
     setStreams((prevStreams) => {
       const updatedStreams = [...prevStreams];
@@ -38,9 +35,6 @@ function Videos() {
       return updatedStreams;
     });
   };
-
-
-
 
   
   useEffect(() => {
@@ -66,6 +60,9 @@ function Videos() {
       })
 
   }, []);
+
+
+
 
 
   return (
