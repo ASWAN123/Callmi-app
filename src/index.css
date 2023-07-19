@@ -10,7 +10,10 @@
 
 body{
     font-family: "Quicksand" , "Roboto" ,  sans-serif ; 
-    background-color: #F6F6F6 ;
+    background-color: #1c0452 ;
+    /* background-color: #fcfdfc; */
+    font-size: .875rem ;
+    color: white;
 }
 
 /* Hide the scroll bar */
