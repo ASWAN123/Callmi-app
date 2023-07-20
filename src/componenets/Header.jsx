@@ -10,12 +10,14 @@ function Header() {
   let navigate = useNavigate()
   let location = useLocation()
   let  path  = location.pathname
-  const username = location.state;
+  const user = location.state;
   
   
 
   const  redirecToacess  = (order) => {
-    setShowMenu(!showmenu)
+    if(showmenu === true){
+      setShowMenu(false)
+    }
     let redirect  = order === 'create' ? navigate( '/create' ) : navigate( '/join' )
   }
 
@@ -27,6 +29,7 @@ function Header() {
         <a href='/' className="text-[20px] md:text-[24px] font-extrabold ">
             Callmi.<span className="">app</span>
         </a>
+        <span>{user?.userID}</span>
         </div>
 
         { !showmenu && !(path.includes('accessRoom')) && <div onClick={()=> {setShowMenu(!showmenu)}} className='md:hidden cursor-pointer '><AiOutlineMenu size={28} /></div> }

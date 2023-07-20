@@ -9,14 +9,14 @@ function AccessForm() {
   let navigate  = useNavigate() ;
   const location = useLocation() ;
   let  path = location.pathname ;
-  let [ userInfo ,  setUserInfo ] = useState({  username : '' , roomID:'' , admin:false })
+  let [ userInfo ,  setUserInfo ] = useState({  username : '' , roomID:''  })
   let {data , setData , db } = useContext(roomContext)
   let [ roomchecker ,  setRoomchecker ] = useState(false)
 
 
   useEffect(() => {
     let roomid  = nanoid() 
-    let check  = path === "/create" ? setUserInfo({ userID: nanoid() , username : '' , roomID: roomid } ) : setUserInfo({ userID: nanoid() , username : '' , roomID: '' } )
+    let check  = path === "/create" ? setUserInfo({ admin:false , userID: nanoid() , username : '' , roomID: roomid } ) : setUserInfo({ admin:false , userID: nanoid() , username : '' , roomID: '' } )
   } , [path])
 
 
@@ -32,29 +32,34 @@ function AccessForm() {
 
   const  redirectoRoom = async () => {
     // from here  you can  add  user  to  db  before  redirecting
+    let alreadyexist ;
     if( path === '/create'){
       let name  = userInfo.username
       await db.collection("callmi").doc(userInfo.roomID).set({users:[{...userInfo ,  admin:true }]})
-      navigate('/accessRoom/' + userInfo.roomID ,  { state :{userInfo}  } )
+      navigate('/accessRoom/' + userInfo.roomID ,  { state : {...userInfo ,  admin:true } } )
+      return 
       
     }else{
       // check if  the  room id  already exist  in db  before  you redirect  the  guy
-      let x = db.collection("callmi").doc(userInfo.roomID).get().then((res) => {
+      let x = await db.collection("callmi").doc(userInfo.roomID).get().then((res) => {
         if(res.exists){
-          let room = data?.find((doc) => doc.id == userInfo.roomID)
-          db.collection("callmi").doc(userInfo.roomID).update({...room ,  users:[...room.users , userInfo]})
+          alreadyexist = true
         }else{
           setRoomchecker(true)
+          return
         }
 
       })
-      
-      let name  = userInfo.username
-      navigate('/accessRoom/' + userInfo.roomID  , { state :{userInfo} } )
     }
 
+    if(alreadyexist){
+      let room = data?.find((doc) => doc.id == userInfo.roomID)
+      let addnew  = await db.collection("callmi").doc(userInfo.roomID).update({...room ,  users:[...room.users , {...userInfo ,  admin:false }]})
+      let name  = userInfo.username
+      navigate('/accessRoom/' + userInfo.roomID  , { state :userInfo } )
+    }
 
-     
+  
   }
 
 

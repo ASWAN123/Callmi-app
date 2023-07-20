@@ -5,7 +5,7 @@ import { Route , Routes } from 'react-router-dom';
 import Header from './componenets/Header';
 import AccessForm from './componenets/AccessForm';
 import HomePage from './componenets/HomePage';
-import Room from './componenets/room/Room';
+import Room from "./componenets/Room/Room"
 import { roomContext } from './componenets/ContextAPI';
 
 
@@ -14,7 +14,7 @@ function App() {
 
 
   useEffect(() => {
-    const unsubscribe = db.collection('callmi').onSnapshot((snapshot) => {
+    const unsubscribe =  db.collection('callmi').onSnapshot((snapshot) => {
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data()
@@ -28,20 +28,27 @@ function App() {
   }, []);
 
 
+  useEffect(()=>{
+    console.log('updated')
+  } ,  [data])
+
+
 
   return (
-    <div className="App  container mx-auto min-h-screen  " >
+   
       <roomContext.Provider value={{ data , setData , db }} >
-      <Header />
-      <Routes>
-        <Route path='/' element={ <HomePage /> }></Route>
-        <Route path = '/:action' element={ <AccessForm /> }></Route>
-        <Route path='/accessRoom/:id' element={ <Room /> }></Route>
-      </Routes>
+         <div className="App  container mx-auto min-h-screen  " >
+          <Header />
+          <Routes>
+            <Route exact  path='/' element={ <HomePage /> }></Route>
+            <Route exact  path = '/:action' element={ <AccessForm /> }></Route>
+            <Route exact  path='/accessRoom/:id' element={ <Room /> }></Route>
+          </Routes>
+        </div>
       </roomContext.Provider>
 
 
-    </div>
+    
   );
 }
 
