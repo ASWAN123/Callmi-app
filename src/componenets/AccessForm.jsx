@@ -35,7 +35,7 @@ function AccessForm() {
     let alreadyexist ;
     if( path === '/create'){
       let name  = userInfo.username
-      await db.collection("callmi").doc(userInfo.roomID).set({users:[{...userInfo ,  admin:true }]})
+      await db.collection("callmi").doc(userInfo.roomID).set({users:[{...userInfo , online:true ,  admin:true }]})
       navigate('/accessRoom/' + userInfo.roomID ,  { state : {...userInfo ,  admin:true } } )
       return 
       
@@ -54,7 +54,7 @@ function AccessForm() {
 
     if(alreadyexist){
       let room = data?.find((doc) => doc.id == userInfo.roomID)
-      let addnew  = await db.collection("callmi").doc(userInfo.roomID).update({...room ,  users:[...room.users , {...userInfo ,  admin:false }]})
+      let addnew  = await db.collection("callmi").doc(userInfo.roomID).update({...room ,  users:[...room.users , {...userInfo , online:false , admin:false }]})
       let name  = userInfo.username
       navigate('/accessRoom/' + userInfo.roomID  , { state :userInfo } )
     }

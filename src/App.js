@@ -41,8 +41,9 @@ function App() {
           <Header />
           <Routes>
             <Route exact  path='/' element={ <HomePage /> }></Route>
-            <Route exact  path = '/:action' element={ <AccessForm /> }></Route>
             <Route exact  path='/accessRoom/:id' element={ <Room /> }></Route>
+            <Route exact  path = '/:action' element={ <AccessForm /> }></Route>
+            
           </Routes>
         </div>
       </roomContext.Provider>
