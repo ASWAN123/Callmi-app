@@ -28,9 +28,7 @@ function App() {
   }, []);
 
 
-  useEffect(()=>{
-    console.log('updated')
-  } ,  [data])
+
 
 
 

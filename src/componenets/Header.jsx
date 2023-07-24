@@ -11,11 +11,10 @@ function Header() {
   let navigate = useNavigate()
   let location = useLocation()
   let  path  = location.pathname
-  console.log(path)
   const user = location.state;
   const { data , setData , db } = useContext(roomContext)
   const room = data?.find((doc) => doc.id == user?.roomID)
-  let onlineStatus = room?.users?.find((x) => x.userID == user.userID).online
+  // let onlineStatus = room?.users?.find((x) => x.userID == user.userID)?.online
   
 
   
@@ -36,8 +35,8 @@ function Header() {
         <a href='/' className="text-[20px] md:text-[24px] font-extrabold ">
             Callmi.<span className="">app</span>
         </a>
-        {/* <span>{user?.userID}</span> */}
         </div>
+
 
         { !showmenu && !(path.includes('accessRoom')) && <div onClick={()=> {setShowMenu(!showmenu)}} className='md:hidden cursor-pointer '><AiOutlineMenu size={28} /></div> }
         { showmenu && !(path.includes('accessRoom')) && <div onClick={()=> {setShowMenu(!showmenu)}} className='md:hidden cursor-pointer '><GrClose size={28} /></div> }
@@ -54,10 +53,10 @@ function Header() {
         <button onClick={()=> {redirecToacess("create")}} className="bg-[#f2f3f2] text-black font-bold md:px-6 py-2 rounded-md">Create room</button>
         <button onClick={()=> {redirecToacess("join")}} className="bg-[#105766] text-white font-bold md:px-6 py-2 rounded-md">Join room</button>
         </div> : <div className='flex gap-8 items-center'>
-          <div className='flex gap-4 items-center'>
+          {/* <div className='flex gap-4 items-center'>
             <span className={onlineStatus ? "w-[10px] h-[10px] border rounded-[50%] bg-green-500" : "w-[10px] h-[10px] border rounded-[50%] bg-red-500"}></span>
             <p>{ onlineStatus == true ? "Online" : "Offline" }</p>
-          </div>
+          </div> */}
           {/* <div>
             <button className='text-red-400 font-bold px-2 rounded-lg py-1 '>Log out</button>
           </div> */}
