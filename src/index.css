@@ -32,4 +32,10 @@ body{
   ::-webkit-scrollbar-thumb:hover {
     background-color: #555;
   }
+
+
+#streams video{
+  border-radius: 10px ;
+  border: 2px solid white ;
+}
   

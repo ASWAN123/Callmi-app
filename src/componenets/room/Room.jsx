@@ -14,6 +14,7 @@ import { BsFillMicMuteFill } from 'react-icons/bs';
 
 function CreateRoom() {
   const { data, setData, db } = useContext(roomContext);
+  let navigate = useNavigate()
   const location = useLocation() ;
   const user = location.state ;
   const users = data?.find((y) => y.id == user.roomID)?.users ;
@@ -22,134 +23,156 @@ function CreateRoom() {
   let userinfo = room?.users?.find((x) => x.userID == user.userID) ;
   const [peer, setPeer] = useState() ;
   const [streams, setStreams] = useState([]) ;
-  const [stream , setStream] = useState()
+  const [verstreams, setVerStreams] = useState([])
+
 
   // Show my video on video element
   useEffect(() => {
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices
-        .getUserMedia({ video: true , audio:false })
-        .then((stream) => {
-          const video = document.getElementById("myvideo");
-          video.srcObject = stream;
-          // setStream(stream)
-        })
-        .catch((error) => {
-          console.error("Error accessing media devices:", error);
-        });
-    } else {
-      console.error("getUserMedia is not supported in this browser.");
+    const getReady = async() => {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true ,video: true });
+      const video = document.getElementById("myvideo");
+      video.srcObject = stream ;
     }
+    getReady() ;
   }, []);
 
 
-
-
-  // create  the  peer  stuff and  receive  call
+  // create the pair stuff  and  receive  calls
   useEffect(() => {
-    const initPeer = async (x) => {
-      const newPeer = new Peer(x);
-      console.log(newPeer)
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio:true ,video: true });
-        console.log(stream)
-        newPeer.on("call", (call) => {
-          console.log('call received from' ,  call.peer)
-          call.answer(stream);
-          call.on("stream", (remoteStream) => {
-            console.log('stream recevied ')
-            setStreams((prevList) => [...prevList, { stream:remoteStream , 'peer':call.peer }]);
-          });
-        });
-        setPeer(newPeer);
-      } catch (err) {
-        console.log("Failed to get local stream", err);
+    const CreatePeer = async() => {
+      const newPeer = new Peer(user.userID);
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true ,video: true });
+      newPeer.on('call' , (call) => {
+        // console.log('call received')
+        call.answer(stream) ;
+        call.on('stream' ,  (remoteStream) => {
+          // console.log('waiting done' , remoteStream ) 
+          setStreams((prev) => [...prev , { stream :remoteStream , 'peer':call.peer }])
+        })
+      })
+      setPeer(newPeer)
+    }
+    CreatePeer() ;
+
+    return () => {
+      if (peer) {
+        peer.destroy();
+        console.log('Peer connection destroyed.');
       }
     };
-    initPeer(user.userID);
 
-    return 
-  }, []);
-  
+  } , [])
 
-  // join the  room
+
+  // make calls with all the  members  in the  room
   const join_call = async () => {
-    // console.log(otherusers)
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({  audio:true, video: true });
-      otherusers.forEach((x) => {
-        console.log(x ,  'lp')
-        const call = peer.call( x.userID , stream ) ;
-        console.log('calling....' ,  call) ;
-        call.on("stream", (remoteStream) => {
-          console.log('recived a  stream')
-          setStreams(( prevList ) => [...prevList, { stream :remoteStream , 'peer':call.peer }]);
-
-        });
-      });
-    } catch (err) {
-      console.log("Failed to get local stream", err);
-    }
-
-    return 
-  };
-  
-
-  // // update the  online status for  the  users  if there  is  a  stream
-
-  useEffect( () => {
-    if(streams.length > 0 ){
-      console.log('changing ')
-      let newusers = users.map((x) => {
-        if( x.userID == user.userID && x.admin == false){
-          return {...x ,  online:true }
+    const stream = await navigator.mediaDevices.getUserMedia({  audio:true, video: true });
+    // update user online status
+      let newusers = users.map(x => {
+        if(x.userID == user.userID && x.admin == false){
+          return { ...x ,  online:true}
         }
         return {...x}
       })
-      let update = db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
-    }
+      await db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers}) 
+      otherusers?.forEach((x) => {
+        // console.log('calling ... ' , x)
+        const call = peer.call( x.userID , stream ) ;
+        console.log(call)
+        call.on("stream", (remoteStream) => {
+          // console.log('we have received  a  stream' , remoteStream)
+          setStreams(( prevList ) => [...prevList, { stream :remoteStream , 'peer':call.peer }]);
+        });
+      });
+  }
 
-  }  ,  [streams])
+  useEffect(() => {
+    if(streams.length > 0) {
+      let basket = []
+      streams.forEach((y) => {
+        if( basket.filter((w) => w.peer == y.peer).length < 1 && users.find((x) => x.userID == y.peer).online == true ){
+          basket.push(y)
+        }
+      })
+
+      setVerStreams(basket)
+
+    }
+  } ,  [streams])
+
+
+  // stream of  the  user get deleted as  soon as  they close  the page
+  useEffect(() => {
+    const updateFirebaseObject = async () => {
+      try {
+        let newusers = users.map((x) => {
+          if(user.admin ){
+            return {...x ,  online:false }
+          }
+          return {...x}
+        })
+        let update = await db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
+      } catch (error) {
+        console.error('Error updating Firebase object:', error);
+
+      }
+    };
+
+    // Add the unload event listener to trigger the update when the user leaves the website
+    window.addEventListener('unload', updateFirebaseObject);
+    window.addEventListener('beforeunload', updateFirebaseObject);
+    // Clean up the event listener when the component unmounts
+    return () => {
+      window.removeEventListener('unload', updateFirebaseObject);
+      window.addEventListener('beforeunload', updateFirebaseObject);
+    };
+
+  } ,  [])
+
+
+
+
+
   
 
-  // // end  the  call
-  // const callEnd = async () => {
-  //   let newusers = users.map((x) => {
-  //     if(x.userID == user.userID && x.admin == false){
-  //       return {...x ,  online:false }
-  //     }
-  //     return {...x}
-  //   })
-  //   setStreams([])
-  //   await db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
-  // } 
+  // end  the  call
+  const callEnd = async () => {
+    let newusers = users.map((x) => {
+      if(x.userID == user.userID && x.admin == false){
+        return {...x ,  online:false }
+      }
+      return {...x}
+    })
+    setVerStreams([])
+    await db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
+  } 
 
-  // // toggle  the  mic
-  // const toggleMic = () => {
-  //   let newusers = users.map((x) => {
-  //     if(x.userID == user.userID){
-  //       let order = x.video.mic == true ? false : true ;
-  //       return {...x ,  video:{...x.video , mic: order } }
-  //     }
-  //     return {...x}
-  //   })
-  //   let w =  db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
-  //   return 
-  // }
+  // toggle  the  mic
+  const toggleMic = () => {
+    let newusers = users.map((x) => {
+      if(x.userID == user.userID){
+        let order = x.video.mic == true ? false : true ;
+        return {...x ,  video:{...x.video , mic: order } }
+      }
+      return {...x}
+    })
+    let w =  db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
+    return 
+  }
 
-  // // toggle  video display
-  // const togglevid = () => {
-  //   let newusers = users.map((x) => {
-  //     if(x.userID == user.userID){
-  //       let order = x.video.show == true ? false : true ;
-  //       return {...x ,  video:{...x.video , show: order  } }
-  //     }
-  //     return {...x}
-  //   })
-  //   let w =  db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
-  //   return
+  // toggle  video display
+  const togglevid = () => {
+    let newusers = users.map((x) => {
+      if(x.userID == user.userID){
+        let order = x.video.show == true ? false : true ;
+        return {...x ,  video:{...x.video , show: order  } }
+      }
+      return {...x}
+    })
+    let w =  db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
+    return
     
-  // }
+  }
 
 
 
@@ -160,9 +183,10 @@ function CreateRoom() {
     <main className="flex gap-2 justify-center ">
       {/* strames componenets */}
       <Streams
-        streams={streams}
+        streams={verstreams}
         online={userinfo?.online}
         users={users}
+        setVerStreams={setVerStreams}
       />
 
       <div className="md:min-w-[640px] max-w-[640px]  flex flex-col  gap-2 items-center relative justify-center ">
@@ -175,7 +199,7 @@ function CreateRoom() {
           muted
         ></video>
         <div className=" w-full bg-[#ab9fbb] py-1 rounded-md flex gap-8 md:gap-12 items-center justify-center ">
-          {/* {userinfo?.online === true && (
+          {userinfo?.online === true && (
             <>
 
               <button className=" cursor-pointer border-2 border-white rounded-[50%] p-2 relative " onClick={toggleMic}>
@@ -190,7 +214,7 @@ function CreateRoom() {
                 <IoCall size={32} color="red" />
               </button> }
             </>
-          )} */}
+          )}
           { !userinfo?.online && !user.admin && (
             <div className=" cursor-pointer border-2 border-white rounded-[50%] p-2  ">
               <IoCall size={32} color="green" onClick={join_call} />

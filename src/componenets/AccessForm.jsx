@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { nanoid } from "nanoid";
 import { roomContext } from "./ContextAPI";
 import { Ring } from "@uiball/loaders";
+import firebase from "firebase/compat/app";
 
 function AccessForm() {
   let navigate = useNavigate();
@@ -47,6 +48,14 @@ function AccessForm() {
         .collection("callmi")
         .doc(userInfo.roomID)
         .set({
+          chat: [
+            {
+              name: userInfo.username.trim() ,
+              content: userInfo.username + " ! Joined the room" ,
+              time: new Date().toISOString().split('T')[0] ,
+              type: "joined",
+            },
+          ],
           users: [
             {
               ...userInfo,
@@ -56,8 +65,10 @@ function AccessForm() {
             },
           ],
         });
-      setLoading(false)
-      navigate('/accessRoom/' + userInfo.roomID ,  { state : {...userInfo ,  admin:true  } } )
+      setLoading(false);
+      navigate("/accessRoom/" + userInfo.roomID, {
+        state: { ...userInfo, admin: true },
+      });
       return;
     } else {
       // check if  the  room id  already exist  in db  before  you redirect  the  guy
@@ -77,10 +88,7 @@ function AccessForm() {
 
     if (alreadyexist) {
       let room = await data?.find((doc) => doc.id == userInfo.roomID);
-      let addnew = await db
-        .collection("callmi")
-        .doc(userInfo.roomID)
-        .update({
+      let addnew = await db.collection("callmi").doc(userInfo.roomID).update({
           ...room,
           users: [
             ...room.users,
@@ -91,9 +99,15 @@ function AccessForm() {
               video: { mic: true, show: true },
             },
           ],
+          chat:firebase.firestore.FieldValue.arrayUnion({
+            name: userInfo.username.trim() ,
+            content: userInfo.username + " ! Joined the room" ,
+            time: new Date().toISOString().split('T')[0] ,
+            type: "joined",
+          }),
         });
-      setLoading(false)
-      navigate('/accessRoom/' + userInfo.roomID  , { state :userInfo } )
+      setLoading(false);
+      navigate("/accessRoom/" + userInfo.roomID, { state: userInfo });
     }
   };
 

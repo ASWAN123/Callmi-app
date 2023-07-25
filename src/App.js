@@ -7,6 +7,7 @@ import AccessForm from './componenets/AccessForm';
 import HomePage from './componenets/HomePage';
 import Room from "./componenets/Room/Room"
 import { roomContext } from './componenets/ContextAPI';
+import Errorpage from './Errorpage';
 
 
 function App() {
@@ -41,6 +42,7 @@ function App() {
             <Route exact  path='/' element={ <HomePage /> }></Route>
             <Route exact  path='/accessRoom/:id' element={ <Room /> }></Route>
             <Route exact  path = '/:action' element={ <AccessForm /> }></Route>
+            <Route exact  path = '/Error' element={ <Errorpage /> }></Route>
             
           </Routes>
         </div>
