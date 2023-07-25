@@ -36,7 +36,7 @@ function Header() {
     })
     await db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
 
-    navigate('/Callmi-app')
+    navigate('/')
   }
 
 
