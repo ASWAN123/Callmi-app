@@ -1,16 +1,15 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
+console.log(process.env )
 const firebaseConfig = {
-  apiKey: "AIzaSyB0o4Uq7TRjSO2oPdn0qUQ2wRb9Xav_hzw",
-  authDomain: "callmi-b1821.firebaseapp.com",
-  projectId: "callmi-b1821",
-  storageBucket: "callmi-b1821.appspot.com",
-  messagingSenderId: "272923750975",
-  appId: "1:272923750975:web:ed37f939eafe23c8eefe8a"
-};
-
-
-firebase.initializeApp(firebaseConfig);
+  apiKey:process.env.REACT_APP_A ,
+  authDomain:process.env.REACT_APP_B ,
+  projectId: process.env.REACT_APP_C,
+  storageBucket:process.env.REACT_APP_D ,
+  messagingSenderId:process.env.REACT_APP_E ,
+  appId: process.env.REACT_APP_F
+}
+firebase.initializeApp(firebaseConfig) ;
 
 export const db = firebase.firestore();
