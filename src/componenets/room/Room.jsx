@@ -3,8 +3,6 @@ import { BiCopy, BiVideo  , BiVideoOff} from "react-icons/bi";
 import { BsFillVolumeDownFill } from "react-icons/bs";
 import { AiTwotoneAudio } from "react-icons/ai";
 import { IoCall } from "react-icons/io5";
-import AccessForm from "../AccessForm";
-import Header from "../Header";
 import { useLocation, useNavigate } from "react-router-dom";
 import Chat from "./Chat";
 import Streams from "./Streams";
@@ -29,9 +27,14 @@ function CreateRoom() {
   // Show my video on video element
   useEffect(() => {
     const getReady = async() => {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio:true ,video: true });
-      const video = document.getElementById("myvideo");
-      video.srcObject = stream ;
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({ audio:true ,video: true });
+        const video = document.getElementById("myvideo");
+        video.srcObject = stream ;
+      }catch(error){
+        navigate('/Error')
+      }
+
     }
     getReady() ;
   }, []);
@@ -78,7 +81,6 @@ function CreateRoom() {
       otherusers?.forEach((x) => {
         // console.log('calling ... ' , x)
         const call = peer.call( x.userID , stream ) ;
-        console.log(call)
         call.on("stream", (remoteStream) => {
           // console.log('we have received  a  stream' , remoteStream)
           setStreams(( prevList ) => [...prevList, { stream :remoteStream , 'peer':call.peer }]);
@@ -106,7 +108,7 @@ function CreateRoom() {
     const updateFirebaseObject = async () => {
       try {
         let newusers = users.map((x) => {
-          if(user.admin ){
+          if( x.userID == user.userID ){
             return {...x ,  online:false }
           }
           return {...x}

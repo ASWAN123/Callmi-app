@@ -63,7 +63,7 @@ function Chat() {
               }
 
               {
-                x.type == 'normal' && x.name === user.username && <div className="flex flex-col  gap-2 chat-elem" key={index}>
+                x.type == 'normal' && x.name !== user.username && <div className="flex flex-col  gap-2 chat-elem" key={index}>
                    <p className=" bg-gray-200  px-2 p-1 text-black w-fit ml-auto rounded-md  ">
                      {x.content}
                    </p>
@@ -78,7 +78,7 @@ function Chat() {
               }
 
                {
-                x.type == 'normal' && x.name !== user.username && <div className=" flex flex-col  gap-2 chat-elem" key={index}>
+                x.type == 'normal' && x.name === user.username && <div className=" flex flex-col  gap-2 chat-elem" key={index}>
                    <p className=" bg-purple-800   px-2 p-1 text-white mr-auto w-fit rounded-md ">
                      {x.content}
                    </p>

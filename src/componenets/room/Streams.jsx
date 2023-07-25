@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactPlayer from "react-player";
 import { DotWave } from "@uiball/loaders";
 import { BsFillMicMuteFill } from "react-icons/bs";
+import {  BiVideoOff} from "react-icons/bi";
 
 function Streams({ streams, online, users  , setVerStreams }) {
   let newStreams = streams
@@ -67,7 +68,14 @@ function Streams({ streams, online, users  , setVerStreams }) {
                     className="absolute top-8 left-2 "
                   />
                 )}
-                <ReactPlayer
+                {!users?.find((x) => x.userID == streamUrl.peer)?.video.show && (
+                  <BiVideoOff
+                    size={28}
+                    color="red"
+                    className="absolute top-8 left-12 "
+                  />
+                )}
+                { users?.find((x) => x.userID == streamUrl.peer)?.video.show && <ReactPlayer
                   key={streamUrl.peer}
                   url={streamUrl.stream}
                   width="100%"
@@ -78,7 +86,10 @@ function Streams({ streams, online, users  , setVerStreams }) {
                   muted={
                     !users?.find((x) => x.userID == streamUrl.peer)?.video["mic"]
                   }
-                />
+                />}
+                { !users?.find((x) => x.userID == streamUrl.peer)?.video.show && <div className="h-[215px] border flex items-center justify-center border-red-200 ">
+                  <p className=" capitalize text-[18px] ">{users?.find((x) => x.userID == streamUrl.peer)?.username}</p>
+                  </div>}
               </div>
             );
           
