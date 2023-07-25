@@ -38,7 +38,7 @@ function Chat() {
   useEffect(() => {
     let x = document.getElementById('chat')
     x.scrollTo({ left: 0 , top: 700*chat?.length , behavior: "smooth" })
-    console.log(x)
+    
   } ,  [chat])
 
   return (

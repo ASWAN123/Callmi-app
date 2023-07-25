@@ -3,18 +3,22 @@ import { BiCopy, BiVideo  , BiVideoOff} from "react-icons/bi";
 import { BsFillVolumeDownFill } from "react-icons/bs";
 import { AiTwotoneAudio } from "react-icons/ai";
 import { IoCall } from "react-icons/io5";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate , Redirect  } from "react-router-dom";
 import Chat from "./Chat";
 import Streams from "./Streams";
 import { Peer } from "peerjs";
 import { roomContext } from "../ContextAPI";
 import { BsFillMicMuteFill } from 'react-icons/bs';
+import Errorpage from "../../Errorpage";
 
 function CreateRoom() {
   const { data, setData, db } = useContext(roomContext);
   let navigate = useNavigate()
   const location = useLocation() ;
   const user = location.state ;
+
+
+
   const users = data?.find((y) => y.id == user.roomID)?.users ;
   let otherusers = users?.filter((x) => x.online == true && x.userID !== user.userID) ;
   const room = data?.find((doc) => doc.id == user.roomID) ;
@@ -22,6 +26,7 @@ function CreateRoom() {
   const [peer, setPeer] = useState() ;
   const [streams, setStreams] = useState([]) ;
   const [verstreams, setVerStreams] = useState([])
+
 
 
   // Show my video on video element
@@ -32,7 +37,7 @@ function CreateRoom() {
         const video = document.getElementById("myvideo");
         video.srcObject = stream ;
       }catch(error){
-        navigate('/Error')
+        navigate('/error')
       }
 
     }
@@ -213,12 +218,12 @@ function CreateRoom() {
                 <BiVideo size={32} color={userinfo?.video?.show == false ? "red" : "blue"  } />
               </button>
 
-              { !user.admin && <button className=" cursor-pointer border-2 border-white rounded-[50%] p-2  " onClick={callEnd}>
+              { !user?.admin && <button className=" cursor-pointer border-2 border-white rounded-[50%] p-2  " onClick={callEnd}>
                 <IoCall size={32} color="red" />
               </button> }
             </>
           )}
-          { !userinfo?.online && !user.admin && (
+          { !userinfo?.online && !user?.admin && (
             <div className=" cursor-pointer border-2 border-white rounded-[50%] p-2  ">
               <IoCall size={32} color="green" onClick={join_call} />
             </div>

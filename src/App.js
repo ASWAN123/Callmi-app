@@ -1,7 +1,7 @@
 import {  useEffect, useState ,  useContext } from 'react';
 import './App.css';
 import { db } from "./firebaseConfig"
-import { Route , Routes } from 'react-router-dom';
+import { Route , Routes, useNavigate } from 'react-router-dom';
 import Header from './componenets/Header';
 import AccessForm from './componenets/AccessForm';
 import HomePage from './componenets/HomePage';
@@ -12,6 +12,7 @@ import Errorpage from './Errorpage';
 
 function App() {
   let [data ,  setData] = useState([])
+  let Navigate = useNavigate()
 
 
   useEffect(() => {
@@ -42,7 +43,8 @@ function App() {
             <Route exact  path='/' element={ <HomePage /> }></Route>
             <Route exact  path='/accessRoom/:id' element={ <Room /> }></Route>
             <Route exact  path = '/:action' element={ <AccessForm /> }></Route>
-            <Route exact  path = '/Error' element={ <Errorpage /> }></Route>
+            <Route exact  path = '/error' element={ <Errorpage /> }></Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
             
           </Routes>
         </div>
