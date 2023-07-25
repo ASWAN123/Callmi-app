@@ -23,7 +23,7 @@ function Streams({ streams, online, users  , setVerStreams }) {
   useEffect(() => {
     let x = document.getElementById('streams')
     x.scrollTo({ left: 0 , top: 700*streams?.length , behavior: "smooth" })
-    console.log(x)
+    // console.log(x)
   } ,  [streams])
 
   

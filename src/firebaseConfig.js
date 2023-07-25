@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 
-console.log(process.env )
+
 const firebaseConfig = {
   apiKey:process.env.REACT_APP_A ,
   authDomain:process.env.REACT_APP_B ,
