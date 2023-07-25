@@ -35,7 +35,7 @@ function CreateRoom() {
         const video = document.getElementById("myvideo");
         video.srcObject = stream ;
       }catch(error){
-        navigate('/error')
+        navigate('/Callmi-app/error')
       }
 
     }
@@ -102,6 +102,7 @@ function CreateRoom() {
       })
 
       setVerStreams(basket)
+      // console.log(basket ,  'kl')
 
     }
   } ,  [streams])

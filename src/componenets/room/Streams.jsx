@@ -6,6 +6,7 @@ import {  BiVideoOff} from "react-icons/bi";
 
 function Streams({ streams, online, users  , setVerStreams }) {
   let newStreams = streams
+  // console.log(newStreams)
   useEffect(() => {
     if(streams.length > 0) {
       let basket = []
@@ -57,7 +58,6 @@ function Streams({ streams, online, users  , setVerStreams }) {
 
       <div id='streams' className="p-2  h-[90%]  overflow-auto ">
         {newStreams?.map((streamUrl) => {
-          // console.log(users.find((x) => x.userID == streamUrl.peer).online)
 
             return (
               <div key={streamUrl.peer} className="relative">
