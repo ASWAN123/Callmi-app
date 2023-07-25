@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/Callmi-app/static/css/main.1906c43e.css",
-    "main.js": "/Callmi-app/static/js/main.41ed946f.js",
+    "main.js": "/Callmi-app/static/js/main.8b9c6395.js",
     "index.html": "/Callmi-app/index.html",
     "main.1906c43e.css.map": "/Callmi-app/static/css/main.1906c43e.css.map",
-    "main.41ed946f.js.map": "/Callmi-app/static/js/main.41ed946f.js.map"
+    "main.8b9c6395.js.map": "/Callmi-app/static/js/main.8b9c6395.js.map"
   },
   "entrypoints": [
     "static/css/main.1906c43e.css",
-    "static/js/main.41ed946f.js"
+    "static/js/main.8b9c6395.js"
   ]
 }
