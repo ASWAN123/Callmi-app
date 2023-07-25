@@ -42,7 +42,7 @@ function Chat() {
   } ,  [chat])
 
   return (
-    <section className="w-[300px] h-[550px]  bg-gray-500/10 relative  rounded-md flex flex-col ">
+    <section className=" w-full  md:w-[300px] h-[550px]  bg-gray-500/10 relative  rounded-md flex flex-col order-3  ">
       <p className="text-center font-semibold py-2 text-[18px] bg-[#8e57b5]  text-white  rounded-t-md  ">
         Chat
       </p>

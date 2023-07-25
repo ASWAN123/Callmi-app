@@ -183,7 +183,7 @@ function CreateRoom() {
 
 
   return (
-    <main className="flex gap-2 justify-center ">
+    <main className="flex gap-2 justify-center flex-col md:flex-row pb-6 md:pb-0">
       {/* strames componenets */}
       <Streams
         streams={verstreams}
@@ -192,7 +192,7 @@ function CreateRoom() {
         setVerStreams={setVerStreams}
       />
 
-      <section className="md:min-w-[640px] max-w-[640px]  flex flex-col  gap-2 items-center relative justify-center ">
+      <section className="md:min-w-[640px] max-w-[640px]  flex flex-col   gap-2 items-center relative justify-center  order-1 md:order-2">
         { users?.find((x) => x.userID == user.userID)?.video.mic == false && <BsFillMicMuteFill size={32} color="red" className="absolute z-10 top-4 left-2 " /> }
         { users?.find((x) => x.userID == user.userID)?.video.show == false && <BiVideoOff size={32} color="red" className="absolute z-10 top-4 left-12 " /> }
         <video

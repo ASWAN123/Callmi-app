@@ -7,7 +7,7 @@ function HomePage() {
         
         <div className='mx-auto flex  gap-4 flex-wrap  justify-center relative'>
             <img className=' rounded-[50%] w-[100px] h-[100px]  shadow-md  ' src="./images/naser1.png" alt="" />
-            <img className=' rounded-[50%] w-[100px] h-[100px]  shadow-md ' src="./images/pngfind.com-woman-profile-png-4433119.png" alt="" />
+            <img className=' rounded-[50%] w-[100px] h-[100px]  shadow-md ' src="./images/pngfind.com-woman-profile-png-4433119.jpg" alt="" />
             <img className=' rounded-[50%] w-[100px] h-[100px]  shadow-md' src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=580&q=80" alt="" />
             <img className=' rounded-[50%] w-[100px] h-[100px]  shadow-md ' src="./images/Daco_4739617.png" alt="" />
             <img className=' rounded-[50%] w-[100px] h-[100px]  shadow-md ' src="./images/Daco_5511364.png" alt="" />
