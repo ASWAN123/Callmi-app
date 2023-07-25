@@ -81,6 +81,7 @@ function AccessForm() {
             alreadyexist = true;
           } else {
             setRoomchecker(true);
+            setLoading(false)
             return;
           }
         });
@@ -110,6 +111,9 @@ function AccessForm() {
       navigate("/accessRoom/" + userInfo.roomID, { state: userInfo });
     }
   };
+
+
+
 
   return (
     // style={{"boxShadow": "0 2px 50px lightgray"}}
