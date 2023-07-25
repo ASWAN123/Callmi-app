@@ -1,5 +1,6 @@
 {
   "name": "callmi_app",
+  "homepage": "https://aswan123.github.io/Callmi-app/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
