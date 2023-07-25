@@ -78,7 +78,6 @@ function Streams({ streams, online, users  , setVerStreams }) {
                 { users?.find((x) => x.userID == streamUrl.peer)?.video.show && <ReactPlayer
                   key={streamUrl.peer}
                   url={streamUrl.stream}
-                  style= {{ transform: "scaleX(-1)" }}
                   width="100%"
                   playing={
                     users?.find((x) => x.userID == streamUrl.peer)?.video["show"]

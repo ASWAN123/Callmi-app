@@ -17,8 +17,6 @@ function CreateRoom() {
   const location = useLocation() ;
   const user = location.state ;
 
-
-
   const users = data?.find((y) => y.id == user.roomID)?.users ;
   let otherusers = users?.filter((x) => x.online == true && x.userID !== user.userID) ;
   const room = data?.find((doc) => doc.id == user.roomID) ;
