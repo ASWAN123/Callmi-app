@@ -36,7 +36,7 @@ function Header() {
     })
     await db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
 
-    navigate('/')
+    navigate('/Callmi-app')
   }
 
 
@@ -44,7 +44,7 @@ function Header() {
   return (
     <nav className="p-3 flex justify-between items-center  #1c0452 border-gray-300  shadow-[0_12px_12px_-15px_rgba(0,0,0,0.3)] shadow-gray-100 mb-6 ">
         <div className="">
-        <a href='/' className="text-[20px] md:text-[24px] font-extrabold ">
+        <a href='/Callmi-app' className="text-[20px] md:text-[24px] font-extrabold ">
             Callmi.<span className="">app</span>
         </a>
         </div>
