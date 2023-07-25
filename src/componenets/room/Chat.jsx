@@ -42,7 +42,7 @@ function Chat() {
   } ,  [chat])
 
   return (
-    <div className="w-[300px] h-[550px]  bg-gray-500/10 relative  rounded-md flex flex-col ">
+    <section className="w-[300px] h-[550px]  bg-gray-500/10 relative  rounded-md flex flex-col ">
       <p className="text-center font-semibold py-2 text-[18px] bg-[#8e57b5]  text-white  rounded-t-md  ">
         Chat
       </p>
@@ -118,7 +118,7 @@ function Chat() {
           className="cursor-pointer h-12  bg-[#105766]/50 text-white  px-2 text-[15px]  "
         />
       </form>
-    </div>
+    </section>
   );
 }
 

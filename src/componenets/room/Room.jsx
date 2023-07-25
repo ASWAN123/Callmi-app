@@ -192,7 +192,7 @@ function CreateRoom() {
         setVerStreams={setVerStreams}
       />
 
-      <div className="md:min-w-[640px] max-w-[640px]  flex flex-col  gap-2 items-center relative justify-center ">
+      <section className="md:min-w-[640px] max-w-[640px]  flex flex-col  gap-2 items-center relative justify-center ">
         { users?.find((x) => x.userID == user.userID)?.video.mic == false && <BsFillMicMuteFill size={32} color="red" className="absolute z-10 top-4 left-2 " /> }
         { users?.find((x) => x.userID == user.userID)?.video.show == false && <BiVideoOff size={32} color="red" className="absolute z-10 top-4 left-12 " /> }
         <video
@@ -224,7 +224,7 @@ function CreateRoom() {
             </div>
           )}
         </div>
-      </div>
+      </section>
       {/* chat componenet */}
       <Chat />
     </main>

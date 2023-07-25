@@ -29,7 +29,7 @@ function Streams({ streams, online, users  , setVerStreams }) {
   
 
   return (
-    <div className="w-[300px] min-h-full bg-gradient-to-b from-[#040101]/30 to-[#040101]/5% relative">
+    <section className="w-[300px] min-h-full bg-gradient-to-b from-[#040101]/30 to-[#040101]/5% relative">
       <h1 className=" rounded-t-md  text-center font-semibold py-2  bg-[#8e57b5] text-[18px] text-white  ">
         Streams
       </h1>
@@ -96,7 +96,7 @@ function Streams({ streams, online, users  , setVerStreams }) {
 
         })}
       </div>
-    </div>
+    </section>
   );
 }
 
