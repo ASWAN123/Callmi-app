@@ -88,6 +88,7 @@ function CreateRoom() {
       });
   }
 
+  // filter the streams  to keep only  streams for  the  users  that  are  online
   useEffect(() => {
     if(streams.length > 0) {
       let basket = []

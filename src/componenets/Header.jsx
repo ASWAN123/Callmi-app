@@ -14,7 +14,7 @@ function Header() {
   const user = location.state;
   const { data , setData , db } = useContext(roomContext)
   const room = data?.find((doc) => doc.id == user?.roomID)
-  // let onlineStatus = room?.users?.find((x) => x.userID == user.userID)?.online
+  let onlineStatus = room?.users?.find((x) => x.userID == user.userID)?.online
   
 
   
@@ -25,6 +25,18 @@ function Header() {
       setShowMenu(false)
     }
     let redirect  = order === 'create' ? navigate( '/create' ) : navigate( '/join' )
+  }
+
+  const logOut = async() => {
+    let newusers = room?.users?.map((x) => {
+      if(x.userID == user.userID && x.admin == false){
+        return {...x ,  online:false }
+      }
+      return {...x}
+    })
+    await db.collection('callmi').doc(user.roomID).update({...room ,  users:newusers})
+
+    navigate('/')
   }
 
 
@@ -53,13 +65,13 @@ function Header() {
         <button onClick={()=> {redirecToacess("create")}} className="bg-[#f2f3f2] text-black font-bold md:px-6 py-2 rounded-md">Create room</button>
         <button onClick={()=> {redirecToacess("join")}} className="bg-[#105766] text-white font-bold md:px-6 py-2 rounded-md">Join room</button>
         </div> : <div className='flex gap-8 items-center'>
-          {/* <div className='flex gap-4 items-center'>
+          <div className='flex gap-4 items-center'>
             <span className={onlineStatus ? "w-[10px] h-[10px] border rounded-[50%] bg-green-500" : "w-[10px] h-[10px] border rounded-[50%] bg-red-500"}></span>
             <p>{ onlineStatus == true ? "Online" : "Offline" }</p>
-          </div> */}
-          {/* <div>
-            <button className='text-red-400 font-bold px-2 rounded-lg py-1 '>Log out</button>
-          </div> */}
+          </div>
+          <div>
+            <button className='text-red-400 font-bold px-2 rounded-lg py-1 ' onClick={logOut}>Log out</button>
+          </div>
         </div> }
   </nav>
   )
